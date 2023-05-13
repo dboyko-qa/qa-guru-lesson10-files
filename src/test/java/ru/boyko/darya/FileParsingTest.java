@@ -74,7 +74,7 @@ public class FileParsingTest {
             while ((zipEntry = zis.getNextEntry()) != null){
                 if (zipEntry.getName().endsWith("csv")){
                     System.out.println(zipEntry.getName());
-                    CSVReader csvReader = new CSVReader(new InputStreamReader(is, StandardCharsets.UTF_8));
+                    CSVReader csvReader = new CSVReader(new InputStreamReader(is));
                     List<String[]> content = csvReader.readAll();
                     System.out.println(content);
                     Assertions.assertEquals(new String[] {"ID", "Check description", "Result"}, content.get(0));
