@@ -3,118 +3,121 @@ package ru.boyko.darya;
 import java.util.Date;
 
 public class Trip {
-    public Integer ID;
-    public String DepartureCity;
-    public String DestinationCity;
-    public Date OutboundDepartureDateTime;
-    public Date OutboundArrivalDateTime;
-    public Date ReturnDepartureDateTime;
-    public Date ReturnArrivalDateTime;
-    public String HotelName;
-    public String HotelAddress;
-    public Person[] Persons;
-    public Integer Price;
-    public Boolean Finished;
+    public Integer id;
+    public String departureCity;
+    public String destinationCity;
 
-    public Integer getID() {
-        return ID;
+    public Date outboundDepartureDateTime;
+    public Date outboundArrivalDateTime;
+    public Date returnDepartureDateTime;
+    public Date returnArrivalDateTime;
+    public String hotelName;
+    public String hotelAddress;
+    public Person[] persons;
+    public Integer price;
+    public Boolean finished;
+
+
+    public static class Person{
+        public String firstName;
+        public String lastName;
+        public String passportNumber;
     }
 
-    public void setID(Integer ID) {
-        this.ID = ID;
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getDepartureCity() {
-        return DepartureCity;
+        return departureCity;
     }
 
     public void setDepartureCity(String departureCity) {
-        DepartureCity = departureCity;
+        this.departureCity = departureCity;
     }
 
     public String getDestinationCity() {
-        return DestinationCity;
+        return destinationCity;
     }
 
     public void setDestinationCity(String destinationCity) {
-        DestinationCity = destinationCity;
+        this.destinationCity = destinationCity;
     }
 
     public Date getOutboundDepartureDateTime() {
-        return OutboundDepartureDateTime;
+        return outboundDepartureDateTime;
     }
 
     public void setOutboundDepartureDateTime(Date outboundDepartureDateTime) {
-        OutboundDepartureDateTime = outboundDepartureDateTime;
+        this.outboundDepartureDateTime = outboundDepartureDateTime;
     }
 
     public Date getOutboundArrivalDateTime() {
-        return OutboundArrivalDateTime;
+        return outboundArrivalDateTime;
     }
 
     public void setOutboundArrivalDateTime(Date outboundArrivalDateTime) {
-        OutboundArrivalDateTime = outboundArrivalDateTime;
+        this.outboundArrivalDateTime = outboundArrivalDateTime;
     }
 
     public Date getReturnDepartureDateTime() {
-        return ReturnDepartureDateTime;
+        return returnDepartureDateTime;
     }
 
     public void setReturnDepartureDateTime(Date returnDepartureDateTime) {
-        ReturnDepartureDateTime = returnDepartureDateTime;
+        this.returnDepartureDateTime = returnDepartureDateTime;
     }
 
     public Date getReturnArrivalDateTime() {
-        return ReturnArrivalDateTime;
+        return returnArrivalDateTime;
     }
 
     public void setReturnArrivalDateTime(Date returnArrivalDateTime) {
-        ReturnArrivalDateTime = returnArrivalDateTime;
+        this.returnArrivalDateTime = returnArrivalDateTime;
     }
 
     public String getHotelName() {
-        return HotelName;
+        return hotelName;
     }
 
     public void setHotelName(String hotelName) {
-        HotelName = hotelName;
+        this.hotelName = hotelName;
     }
 
     public String getHotelAddress() {
-        return HotelAddress;
+        return hotelAddress;
     }
 
     public void setHotelAddress(String hotelAddress) {
-        HotelAddress = hotelAddress;
+        this.hotelAddress = hotelAddress;
     }
 
     public Person[] getPersons() {
-        return Persons;
+        return persons;
     }
 
     public void setPersons(Person[] persons) {
-        Persons = persons;
+        this.persons = persons;
     }
 
     public Integer getPrice() {
-        return Price;
+        return price;
     }
 
     public void setPrice(Integer price) {
-        Price = price;
+        this.price = price;
     }
 
     public Boolean getFinished() {
-        return Finished;
+        return finished;
     }
 
     public void setFinished(Boolean finished) {
-        Finished = finished;
+        this.finished = finished;
     }
 
-    public static class Person{
-        public String FirstName;
-        public String LastName;
-        public String PassportNumber;
-    }
 }
