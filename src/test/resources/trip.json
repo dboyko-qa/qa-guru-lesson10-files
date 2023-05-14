@@ -1,0 +1,25 @@
+{
+  "ID": 1,
+  "DepartureCity": "Moscow",
+  "DestinationCity": "Istanbul",
+  "OutboundDepartureDateTime": "10.05.2023 11:30",
+  "OutboundArrivalDateTime": "10.05.2023 13:30",
+  "ReturnDepartureDateTime": "17.05.2023 16:50",
+  "ReturnArrivalDateTime": "17.05.2023 18:50",
+  "HotelName": "Old City Hotel",
+  "HotelAddress": "KemalPasa 10, Istanbul",
+  "Persons": [
+    {
+      "FirstName": "Ivan",
+      "LastName": "Ivanov",
+      "PassportNumber":"7671 907856"
+    },
+    {
+      "FirstName": "Elena",
+      "LastName": "Ivanova",
+      "PassportNumber":"7671 546732"
+    }
+  ],
+  "Price": 150000,
+  "Finished": false
+}

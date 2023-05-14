@@ -1,6 +1,8 @@
 package ru.boyko.darya;
 
+import com.codeborne.pdftest.PDF;
 import com.codeborne.xlstest.XLS;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.opencsv.CSVParser;
 import com.opencsv.CSVParserBuilder;
 import com.opencsv.CSVReader;
@@ -11,29 +13,38 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-import com.codeborne.pdftest.PDF;
 
 public class FileParsingTest {
 
+    private ClassLoader classLoader = FileParsingTest.class.getClassLoader();
     static final String ZIP_FILE = "check list.zip";
+    static final String CSV_EXTENSION = "csv";
+    static final String PDF_EXTENSION = "pdf";
+    static final String XLSX_EXTENSION = "xlsx";
+
+    static String jsonFile = "trip.json";
+    static String jsonDateTimeFormat = "dd.MM.yyyy HH:mm";
+    static String[] columns = {"ID", "Check description", "Result"};
+
     @Test
     void readPdfFromArchiveTest() {
-        ClassLoader classLoader = FileParsingTest.class.getClassLoader();
         try (InputStream is = classLoader.getResourceAsStream(ZIP_FILE);
              ZipInputStream zis = new ZipInputStream(is)) {
             ZipEntry zipEntry;
 
             while ((zipEntry = zis.getNextEntry()) != null){
-                if (zipEntry.getName().endsWith("pdf")){
+                if (zipEntry.getName().endsWith(PDF_EXTENSION)){
                     PDF pdf = new PDF(zis);
                     System.out.println(pdf.text);
-                    Assertions.assertAll(()->pdf.text.contains("ID"),
-                            () -> pdf.text.contains("Check description"),
-                            () -> pdf.text.contains("Result"));
+                    Assertions.assertAll(()->pdf.text.contains(columns[0]),
+                            () -> pdf.text.contains(columns[1]),
+                            () -> pdf.text.contains(columns[2]));
                 }
             }
         } catch (IOException e) {
@@ -44,21 +55,20 @@ public class FileParsingTest {
     @Test
     void readXlsFromArchiveTest() {
         final String FIRST_SHEET_NAME = "Get a single user";
-        ClassLoader classLoader = FileParsingTest.class.getClassLoader();
         try(InputStream is = classLoader.getResourceAsStream(ZIP_FILE);
             ZipInputStream zis = new ZipInputStream(is)){
             ZipEntry zipEntry;
             while ((zipEntry = zis.getNextEntry()) != null){
-                if (zipEntry.getName().endsWith("xlsx")){
+                if (zipEntry.getName().endsWith(XLSX_EXTENSION)){
                     XLS xls = new XLS(zis);
-                    System.out.println(xls.excel.getSheet("Wrong name"));
-                    Assertions.assertAll(() -> Assertions.assertNotNull(xls.excel.getSheet(FIRST_SHEET_NAME), "Check if the sheet exists"),
+                    Assertions.assertAll(
+                            () -> Assertions.assertNotNull(xls.excel.getSheet(FIRST_SHEET_NAME), "Check if the sheet exists"),
                             () -> xls.excel.getSheet(FIRST_SHEET_NAME).getRow(0).getCell(0).getStringCellValue().
-                            equalsIgnoreCase("ID"),
+                                    equalsIgnoreCase(columns[0]),
                             () -> xls.excel.getSheet(FIRST_SHEET_NAME).getRow(0).getCell(1).getStringCellValue().
-                                    equalsIgnoreCase("Check description"),
+                                    equalsIgnoreCase(columns[1]),
                             () -> xls.excel.getSheet(FIRST_SHEET_NAME).getRow(0).getCell(2).getStringCellValue().
-                                    equalsIgnoreCase("Result")
+                                    equalsIgnoreCase(columns[2])
                             );
                 }
             }
@@ -70,18 +80,17 @@ public class FileParsingTest {
 
     @Test
     void readCsvFromArchiveTest() {
-        ClassLoader classLoader = FileParsingTest.class.getClassLoader();
         try(InputStream is = classLoader.getResourceAsStream(ZIP_FILE);
             ZipInputStream zis = new ZipInputStream(is)){
             ZipEntry zipEntry;
             while ((zipEntry = zis.getNextEntry()) != null){
-                if (zipEntry.getName().endsWith("csv")){
+                if (zipEntry.getName().endsWith(CSV_EXTENSION)){
                     System.out.println(zipEntry.getName());
                     //create csv parser with specific separator to read ; separator
                     CSVParser csvParser = new CSVParserBuilder().withSeparator(';').build();
                     CSVReader csvReader = new CSVReaderBuilder(new InputStreamReader(zis)).withCSVParser(csvParser).build();
                     List<String[]> content = csvReader.readAll();
-                    Assertions.assertArrayEquals(new String[] {"ID", "Check description", "Result"}, content.get(0));
+                    Assertions.assertArrayEquals(columns, content.get(0));
                 }
             }
         }
@@ -90,4 +99,20 @@ public class FileParsingTest {
         }
     }
 
+    @Test
+    void readJsonFileTest() throws IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        DateFormat df = new SimpleDateFormat(jsonDateTimeFormat);
+        objectMapper.setDateFormat(df);
+        try (InputStream is = classLoader.getResourceAsStream(jsonFile);
+        InputStreamReader isr = new InputStreamReader(is)){
+            Trip trip = objectMapper.readValue(isr, Trip.class);
+            //verify trip status and return time after now
+            Date now = new Date();
+            Assertions.assertAll(() -> Assertions.assertFalse(trip.Finished),
+                    () -> Assertions.assertTrue(trip.getReturnArrivalDateTime().after(now)),
+                    () -> Assertions.assertTrue(trip.getReturnDepartureDateTime().after(now))
+            );
+        }
+    }
 }
