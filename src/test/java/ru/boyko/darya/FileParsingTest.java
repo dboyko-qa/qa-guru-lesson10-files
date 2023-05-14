@@ -1,7 +1,10 @@
 package ru.boyko.darya;
 
 import com.codeborne.xlstest.XLS;
+import com.opencsv.CSVParser;
+import com.opencsv.CSVParserBuilder;
 import com.opencsv.CSVReader;
+import com.opencsv.CSVReaderBuilder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -74,10 +77,11 @@ public class FileParsingTest {
             while ((zipEntry = zis.getNextEntry()) != null){
                 if (zipEntry.getName().endsWith("csv")){
                     System.out.println(zipEntry.getName());
-                    CSVReader csvReader = new CSVReader(new InputStreamReader(is));
+                    //create csv parser with specific separator to read ; separator
+                    CSVParser csvParser = new CSVParserBuilder().withSeparator(';').build();
+                    CSVReader csvReader = new CSVReaderBuilder(new InputStreamReader(zis)).withCSVParser(csvParser).build();
                     List<String[]> content = csvReader.readAll();
-                    System.out.println(content);
-                    Assertions.assertEquals(new String[] {"ID", "Check description", "Result"}, content.get(0));
+                    Assertions.assertArrayEquals(new String[] {"ID", "Check description", "Result"}, content.get(0));
                 }
             }
         }
