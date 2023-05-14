@@ -2,7 +2,6 @@ package ru.boyko.darya;
 
 import com.codeborne.pdftest.PDF;
 import com.codeborne.xlstest.XLS;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.opencsv.CSVParser;
 import com.opencsv.CSVParserBuilder;
 import com.opencsv.CSVReader;
@@ -13,24 +12,18 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-public class FileParsingTest {
+public class FileParsingTest extends TestBase{
 
-    private ClassLoader classLoader = FileParsingTest.class.getClassLoader();
     static final String ZIP_FILE = "check list.zip";
     static final String CSV_EXTENSION = "csv";
     static final String PDF_EXTENSION = "pdf";
     static final String XLSX_EXTENSION = "xlsx";
-
-    static String jsonFile = "trip.json";
-    static String jsonDateTimeFormat = "dd.MM.yyyy HH:mm";
     static String[] columns = {"ID", "Check description", "Result"};
+
 
     @Test
     void readPdfFromArchiveTest() {
@@ -55,6 +48,7 @@ public class FileParsingTest {
     @Test
     void readXlsFromArchiveTest() {
         final String FIRST_SHEET_NAME = "Get a single user";
+
         try(InputStream is = classLoader.getResourceAsStream(ZIP_FILE);
             ZipInputStream zis = new ZipInputStream(is)){
             ZipEntry zipEntry;
@@ -99,20 +93,4 @@ public class FileParsingTest {
         }
     }
 
-    @Test
-    void readJsonFileTest() throws IOException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        DateFormat df = new SimpleDateFormat(jsonDateTimeFormat);
-        objectMapper.setDateFormat(df);
-        try (InputStream is = classLoader.getResourceAsStream(jsonFile);
-        InputStreamReader isr = new InputStreamReader(is)){
-            Trip trip = objectMapper.readValue(isr, Trip.class);
-            //verify trip status and return time after now
-            Date now = new Date();
-            Assertions.assertAll(() -> Assertions.assertFalse(trip.Finished),
-                    () -> Assertions.assertTrue(trip.getReturnArrivalDateTime().after(now)),
-                    () -> Assertions.assertTrue(trip.getReturnDepartureDateTime().after(now))
-            );
-        }
-    }
 }
